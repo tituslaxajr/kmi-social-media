@@ -522,34 +522,45 @@
 
   function cardTestimony(v) {
     const d = v.d;
-    // Over a photo: white text + gold accent on a dark-anchored left scrim, so it
-    // reads on any background. No photo: adaptive ink + accent on the solid color.
+    // Square + photo: image on the right with a left-to-right fade.
+    // Story + photo: image on top with a top-to-bottom fade, text at the bottom.
+    // No photo: adaptive ink + accent on the solid color, centered.
+    const photoTop = d.photo && v.fmt === 'story';
     const ink = d.photo ? 'var(--white)' : v.ink;
     const accent = d.photo ? 'var(--kapatid-gold)' : v.accent;
     const leftGrad =
       'linear-gradient(to right, rgba(0,0,0,.42) 0%, rgba(0,0,0,.12) 42%, rgba(0,0,0,0) 70%), ' +
       'linear-gradient(to right, ' + v.tint + '.92) 26%, ' + v.tint + '.55) 48%, ' + v.tint + '0) 84%)';
+    const topGrad =
+      'linear-gradient(to top, rgba(0,0,0,.82) 6%, rgba(0,0,0,.5) 45%, rgba(0,0,0,.12) 78%, rgba(0,0,0,0) 100%), ' +
+      'linear-gradient(to top, ' + v.tint + '.55) 18%, ' + v.tint + '.18) 60%, ' + v.tint + '0) 92%)';
     const layer = d.photo
       ? photoHTML(d.photo, getCrop(d, 'photo')) +
-        '<div style="position:absolute; inset:0; background:' + leftGrad + ';"></div>'
+        '<div style="position:absolute; inset:0; background:' + (photoTop ? topGrad : leftGrad) + ';"></div>'
       : '<div style="position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 6px, rgba(0,0,0,.04) 6px 13px); mix-blend-mode:soft-light; pointer-events:none;"></div>';
-    const textW = d.photo ? '60%' : '78%';
-    const content =
-      '<div style="max-width:' + textW + ';">' +
-        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:' + accent + '; margin-bottom:1cqw;">Testimony</div>' +
-        '<div style="font-family:var(--font-display); font-weight:800; font-size:16cqw; line-height:.7; color:' + accent + '; opacity:.5; height:7cqw; overflow:visible;">“</div>' +
-        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(5cqw * var(--fs)); line-height:1.22; letter-spacing:-0.01em;">' + esc(d.quote) + '</p>' +
-        (d.reference ? '<div style="margin-top:3cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
-        '<div style="margin-top:4cqw;">' +
-          '<div style="width:9cqw; height:2px; background:' + accent + '; margin-bottom:2cqw;"></div>' +
-          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
-          (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
-        '</div>' +
+    const els =
+      '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:' + accent + '; margin-bottom:1cqw;">Testimony</div>' +
+      '<div style="font-family:var(--font-display); font-weight:800; font-size:16cqw; line-height:.7; color:' + accent + '; opacity:.5; height:7cqw; overflow:visible;">“</div>' +
+      '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(5cqw * var(--fs)); line-height:1.22; letter-spacing:-0.01em;">' + esc(d.quote) + '</p>' +
+      (d.reference ? '<div style="margin-top:3cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
+      '<div style="margin-top:4cqw;">' +
+        '<div style="width:9cqw; height:2px; background:' + accent + '; margin-bottom:2cqw;"></div>' +
+        '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
+        (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
       '</div>';
+    let placement;
+    if (photoTop) {
+      placement = '<div style="position:absolute; left:8cqw; right:18cqw; bottom:8cqw; z-index:2;">' + els + '</div>';
+    } else {
+      const textW = d.photo ? '60%' : '78%';
+      placement = '<div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:9cqw; z-index:2;">' +
+        '<div style="max-width:' + textW + ';">' + els + '</div>' +
+        '</div>';
+    }
     return '' +
     '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + ink + '; overflow:hidden;">' +
       layer +
-      '<div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:9cqw; z-index:2;">' + content + '</div>' +
+      placement +
       logoImg('right:6cqw; bottom:6cqw; width:12cqw;', d.photo ? 'brightness(0) invert(1)' : v.logoFilter, '.92') +
     '</div>';
   }

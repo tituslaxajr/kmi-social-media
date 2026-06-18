@@ -503,29 +503,30 @@
 
   function cardTestimony(v) {
     const d = v.d;
-    const tCrop = getCrop(d, 'photo');
-    const avatar = d.photo
-      ? '<div style="width:15cqw; height:15cqw; border-radius:50%; overflow:hidden; flex:0 0 auto; position:relative; box-shadow:0 0 0 0.7cqw rgba(255,255,255,.16);">' +
-          '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + tCrop.x + '% ' + tCrop.y + '%; transform-origin:' + tCrop.x + '% ' + tCrop.y + '%; transform:scale(' + (tCrop.zoom || 1) + ');"></div>' +
-        '</div>'
-      : '';
-    return '' +
-    '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:center; padding:9cqw;">' +
-      '<div style="position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 6px, rgba(0,0,0,.04) 6px 13px); mix-blend-mode:soft-light; pointer-events:none;"></div>' +
-      '<div style="position:relative;">' +
-        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold); margin-bottom:2cqw;">Testimony</div>' +
-        '<div style="font-family:var(--font-display); font-weight:800; font-size:26cqw; line-height:.78; color:var(--kapatid-gold); opacity:.55; height:13cqw; overflow:visible;">“</div>' +
-        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(6cqw * var(--fs)); line-height:1.2; letter-spacing:-0.01em; max-width:24ch;">' + esc(d.quote) + '</p>' +
-        (d.reference ? '<div style="margin-top:4cqw; font-weight:700; font-size:calc(3cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
-        '<div style="margin-top:6cqw; display:flex; align-items:center; gap:4cqw;">' +
-          avatar +
-          '<div style="min-width:0;">' +
-            '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
-            (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
-          '</div>' +
+    const rgb = BG_RGB[d.bg] || BG_RGB.navy;
+    const leftGrad = 'linear-gradient(to right, rgba(' + rgb + ',.97) 30%, rgba(' + rgb + ',.86) 45%, rgba(' + rgb + ',.45) 65%, rgba(' + rgb + ',0) 90%)';
+    const layer = d.photo
+      ? photoHTML(d.photo, getCrop(d, 'photo')) +
+        '<div style="position:absolute; inset:0; background:' + leftGrad + ';"></div>'
+      : '<div style="position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 6px, rgba(0,0,0,.04) 6px 13px); mix-blend-mode:soft-light; pointer-events:none;"></div>';
+    const textW = d.photo ? '60%' : '78%';
+    const content =
+      '<div style="max-width:' + textW + ';">' +
+        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold); margin-bottom:1.5cqw;">Testimony</div>' +
+        '<div style="font-family:var(--font-display); font-weight:800; font-size:22cqw; line-height:.72; color:var(--kapatid-gold); opacity:.5; height:10cqw; overflow:visible;">“</div>' +
+        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(5.2cqw * var(--fs)); line-height:1.22; letter-spacing:-0.01em;">' + esc(d.quote) + '</p>' +
+        (d.reference ? '<div style="margin-top:3.5cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
+        '<div style="margin-top:5cqw;">' +
+          '<div style="width:9cqw; height:2px; background:var(--kapatid-gold); margin-bottom:2.5cqw;"></div>' +
+          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
+          (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
         '</div>' +
-      '</div>' +
-      logoImg('right:6cqw; bottom:6cqw; width:12cqw;', v.logoFilter, '.92') +
+      '</div>';
+    return '' +
+    '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; overflow:hidden;">' +
+      layer +
+      '<div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:9cqw; z-index:2;">' + content + '</div>' +
+      logoImg('right:6cqw; bottom:6cqw; width:12cqw;', d.photo ? 'brightness(0) invert(1)' : v.logoFilter, '.92') +
     '</div>';
   }
 

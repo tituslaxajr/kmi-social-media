@@ -1,0 +1,23 @@
+/* App chrome variables + base — ported from the Content Studio design's <style> block */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+:root {
+  --app-bg:#f4efe7; --app-panel:#ffffff; --app-text:#1f1f21; --app-text2:#3a3a3c;
+  --app-muted:#6f6f77; --app-border:#e0e1e6; --app-input:#ffffff; --app-sunken:#f8f3e9;
+  --app-accent-soft:#eef0f9; --app-accent-soft-bd:#d6daf0; --app-accent-text:#283891;
+}
+.dark-app {
+  --app-bg:#14161b; --app-panel:#1c1f26; --app-text:#f3f4f6; --app-text2:#cbccd2;
+  --app-muted:#8c8f99; --app-border:#2b2f39; --app-input:#23262f; --app-sunken:#23262f;
+  --app-accent-soft:#1b2540; --app-accent-soft-bd:#2a3866; --app-accent-text:#8f9cdd;
+}
+
+.ksb::-webkit-scrollbar { width: 10px; }
+.ksb::-webkit-scrollbar-thumb { background: var(--app-border); border-radius: 8px; border: 3px solid var(--app-panel); }
+
+textarea, input { font-family: var(--font-sans); }
+textarea:focus, input:focus { outline: none; border-color: var(--kapatid-blue) !important; box-shadow: 0 0 0 3px var(--focus-ring); }
+
+button { font-family: var(--font-sans); }
+.tpl-btn:hover { background: var(--app-accent-soft) !important; }

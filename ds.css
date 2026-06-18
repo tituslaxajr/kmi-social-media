@@ -1,0 +1,128 @@
+/* ============================================================
+   Kapatid Ministry — Design System (bundled tokens)
+   Imported from the Claude Design project's design system:
+   fonts + colors + typography + spacing + elevation.
+   @import lines must come first.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Caveat:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---- Families ---- */
+  --font-sans:   'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-display:'Poppins', system-ui, sans-serif;
+  --font-script: 'Caveat', 'Segoe Script', cursive;
+
+  /* ---- Weights ---- */
+  --fw-light: 300; --fw-regular: 400; --fw-medium: 500;
+  --fw-semibold: 600; --fw-bold: 700; --fw-extrabold: 800;
+
+  /* ---- Type scale ---- */
+  --fs-display-xl: 4.5rem; --fs-display-lg: 3.5rem; --fs-display-md: 2.75rem;
+  --fs-h1: 2.25rem; --fs-h2: 1.75rem; --fs-h3: 1.375rem; --fs-h4: 1.125rem;
+  --fs-body-lg: 1.125rem; --fs-body: 1rem; --fs-body-sm: 0.875rem;
+  --fs-caption: 0.75rem; --fs-overline: 0.6875rem;
+
+  /* ---- Line heights ---- */
+  --lh-tight: 1.04; --lh-snug: 1.18; --lh-heading: 1.25; --lh-body: 1.6; --lh-relaxed: 1.75;
+
+  /* ---- Letter spacing ---- */
+  --ls-tighter: -0.02em; --ls-tight: -0.01em; --ls-normal: 0;
+  --ls-wide: 0.04em; --ls-wider: 0.12em; --ls-widest: 0.18em;
+
+  /* ---- Brand core (sampled from logo) ---- */
+  --kapatid-blue:  #283891;
+  --kapatid-red:   #bf1e2e;
+  --kapatid-gold:  #fcb040;
+  --kapatid-taupe: #9b8679;
+  --kapatid-ink:   #3a3a3c;
+
+  /* ---- Expressive surface tints ---- */
+  --blue-surface: #3846b2;
+  --red-surface:  #c82f4d;
+  --gold-surface: #df983f;
+
+  /* ---- Blue scale ---- */
+  --blue-50:#eef0f9; --blue-100:#d6daf0; --blue-200:#aab2e0; --blue-300:#7886cf;
+  --blue-400:#4f60bf; --blue-500:#3846b2; --blue-600:#283891; --blue-700:#202c72;
+  --blue-800:#182155; --blue-900:#11173a;
+
+  /* ---- Red scale ---- */
+  --red-50:#fceced; --red-100:#f7ccd0; --red-200:#ee9aa1; --red-300:#e36672;
+  --red-400:#d33d4f; --red-500:#c82f4d; --red-600:#bf1e2e; --red-700:#9c1825;
+  --red-800:#76121c; --red-900:#500c13;
+
+  /* ---- Gold scale ---- */
+  --gold-50:#fef6e7; --gold-100:#fde7bf; --gold-200:#fcd28b; --gold-300:#fcbf5c;
+  --gold-400:#fcb040; --gold-500:#ef9d22; --gold-600:#d9851a; --gold-700:#ad6712;
+  --gold-800:#7e4a0d; --gold-900:#4f2e08;
+
+  /* ---- Taupe scale ---- */
+  --taupe-50:#f6f3f1; --taupe-100:#e9e2dd; --taupe-200:#d4c7bd; --taupe-300:#bda99c;
+  --taupe-400:#a8917f; --taupe-500:#9b8679; --taupe-600:#7e6c61; --taupe-700:#5f514a;
+  --taupe-800:#423832; --taupe-900:#2a231f;
+
+  /* ---- Ink scale ---- */
+  --ink-900:#1f1f21; --ink-800:#2b2b2d; --ink-700:#3a3a3c; --ink-600:#54545a;
+  --ink-500:#6f6f77; --ink-400:#9596a0; --ink-300:#c2c3ca; --ink-200:#e0e1e6;
+  --ink-100:#eeeff3; --ink-50:#f7f8fa;
+  --white:#ffffff;
+  --paper:#f8f3e9;
+
+  /* ---- Website palette ---- */
+  --kapatid-coral:#c94d45; --coral-bright:#e0654e; --coral-hover:#b23d36;
+  --kapatid-navy:#0b3a5c; --navy-700:#14496f;
+  --sand:#e9e5d7; --sand-soft:#f4efe7; --gold-section:#e6a14e;
+
+  /* ---- Semantic aliases ---- */
+  --color-primary: var(--kapatid-blue);
+  --color-primary-hover: var(--blue-700);
+  --color-primary-press: var(--blue-800);
+  --color-accent: var(--kapatid-red);
+  --color-accent-hover: var(--red-700);
+  --color-highlight: var(--kapatid-gold);
+  --color-cta: var(--kapatid-coral);
+  --color-cta-hover: var(--coral-hover);
+
+  --text-strong: var(--ink-900); --text-body: var(--ink-700);
+  --text-muted: var(--ink-500); --text-on-color: var(--white);
+  --text-link: var(--kapatid-blue);
+
+  --surface-page: var(--paper); --surface-card: var(--white);
+  --surface-sunken: var(--ink-50); --surface-warm: var(--sand);
+  --surface-navy: var(--kapatid-navy); --surface-coral: var(--kapatid-coral);
+  --surface-gold-section: var(--gold-section);
+  --surface-blue: var(--blue-surface); --surface-red: var(--red-surface);
+  --surface-gold: var(--gold-surface);
+
+  --border-subtle: var(--ink-200); --border-default: var(--ink-300);
+  --border-strong: var(--ink-700);
+  --focus-ring: color-mix(in srgb, var(--kapatid-blue) 55%, transparent);
+
+  /* ---- Spacing ---- */
+  --space-0:0; --space-1:0.25rem; --space-2:0.5rem; --space-3:0.75rem;
+  --space-4:1rem; --space-5:1.5rem; --space-6:2rem; --space-7:2.5rem;
+  --space-8:3rem; --space-9:4rem; --space-10:5rem; --space-12:7rem;
+
+  /* ---- Radii ---- */
+  --radius-xs:4px; --radius-sm:8px; --radius-md:12px; --radius-lg:18px;
+  --radius-xl:28px; --radius-pill:999px; --radius-circle:50%;
+
+  /* ---- Containers / borders ---- */
+  --container-sm:640px; --container-md:880px; --container-lg:1120px; --container-xl:1280px;
+  --border-thin:1px; --border-med:2px; --border-thick:3px;
+
+  /* ---- Shadows ---- */
+  --shadow-xs: 0 1px 2px rgba(42,35,31,0.06);
+  --shadow-sm: 0 2px 6px rgba(42,35,31,0.08);
+  --shadow-md: 0 6px 18px rgba(42,35,31,0.10);
+  --shadow-lg: 0 14px 36px rgba(42,35,31,0.14);
+  --shadow-xl: 0 28px 60px rgba(42,35,31,0.18);
+  --shadow-photo: 0 10px 28px rgba(42,35,31,0.22);
+  --shadow-focus: 0 0 0 3px var(--focus-ring);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22,0.61,0.36,1);
+  --ease-in-out: cubic-bezier(0.45,0,0.55,1);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --dur-fast:120ms; --dur-base:200ms; --dur-slow:320ms;
+}

@@ -119,6 +119,7 @@
         time: '8:00 AM',
         location: 'Covenant Church, Caloocan City',
         cta: 'Register at kapatidministry.org',
+        photo: '',
         caption: 'You’re invited! 🌿 Join us for Rooted & Built Up — our Community Youth Camp.\n\n🗓 Sat, July 19 · 8:00 AM\n📍 Covenant Church, Caloocan City\n\nRegister at kapatidministry.org\n\n#KapatidMinistry #RootedAndBuiltUp #YouthCamp'
       },
       stat: {
@@ -439,6 +440,39 @@
 
   function cardEvent(v) {
     const d = v.d;
+    if (d.photo) {
+      // Image version — same gradient treatment as the other photo cards:
+      // Square = photo right with a left-to-right fade; Story = photo top with a
+      // top-to-bottom fade. White text + gold accents over the dark scrim.
+      const photoTop = v.fmt === 'story';
+      const leftGrad =
+        'linear-gradient(to right, rgba(0,0,0,.5) 0%, rgba(0,0,0,.18) 44%, rgba(0,0,0,0) 74%), ' +
+        'linear-gradient(to right, ' + v.tint + '.9) 24%, ' + v.tint + '.52) 50%, ' + v.tint + '0) 86%)';
+      const topGrad =
+        'linear-gradient(to top, rgba(0,0,0,.82) 6%, rgba(0,0,0,.5) 45%, rgba(0,0,0,.12) 78%, rgba(0,0,0,0) 100%), ' +
+        'linear-gradient(to top, ' + v.tint + '.55) 18%, ' + v.tint + '.18) 60%, ' + v.tint + '0) 92%)';
+      const head =
+        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.28em; text-transform:uppercase; font-weight:700; opacity:.85;">You’re invited</div>' +
+        '<h2 style="margin:2cqw 0 1.5cqw; font-family:var(--font-display); font-weight:800; font-size:calc(9.5cqw * var(--fs)); line-height:1.0; letter-spacing:-0.015em;">' + esc(d.title) + '</h2>' +
+        '<div style="font-family:var(--font-script); font-size:calc(6.5cqw * var(--fs)); line-height:1; color:var(--kapatid-gold);">' + esc(d.subtitle) + '</div>';
+      const details =
+        '<div style="display:flex; flex-direction:column; gap:2.4cqw; margin-top:4cqw;">' +
+          '<div style="height:1px; background:rgba(255,255,255,.32);"></div>' +
+          '<div style="display:flex; gap:6cqw;">' + eventField('Date', d.date) + eventField('Time', d.time) + '</div>' +
+          eventField('Place', d.location) +
+          '<div style="display:inline-flex; align-self:flex-start; align-items:center; max-width:100%; background:var(--white); color:var(--ink-900); padding:2.6cqw 5.5cqw; border-radius:24px; font-weight:700; font-size:calc(3.6cqw * var(--fs)); line-height:1.25; margin-top:0.5cqw; white-space:normal; overflow-wrap:anywhere;">' + esc(d.cta) + '</div>' +
+        '</div>';
+      const placement = photoTop
+        ? '<div style="position:absolute; left:8cqw; right:14cqw; bottom:8cqw; z-index:2;">' + head + details + '</div>'
+        : '<div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:9cqw; z-index:2;"><div style="max-width:62%;">' + head + details + '</div></div>';
+      return '' +
+      '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:var(--white); overflow:hidden;">' +
+        photoHTML(d.photo, getCrop(d, 'photo')) +
+        '<div style="position:absolute; inset:0; background:' + (photoTop ? topGrad : leftGrad) + ';"></div>' +
+        placement +
+        logoImg('right:6cqw; bottom:6cqw; width:12cqw;', 'brightness(0) invert(1)', '.92') +
+      '</div>';
+    }
     return '' +
     '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:space-between; padding:9cqw;">' +
       '<div style="position:absolute; left:6cqw; top:7cqw; font-size:7cqw; color:' + v.decoFaint + '; font-weight:800;">✳</div>' +
@@ -638,7 +672,7 @@
       verse: [bg(), size(), txt('headline', 'Headline phrase'), area('body', 'Verse text'), txt('reference', 'Reference')],
       birthday: [choice('style', 'Layout style', [{ label: 'Classic', v: 'classic' }, { label: 'Festive', v: 'festive' }, { label: 'Celebratory', v: 'celebratory' }, { label: 'Cinematic', v: 'cinematic' }, { label: 'Vintage', v: 'vintage' }]), bg(), size(), txt('name', 'Celebrant name'), photo('photo', 'Photo', false), area('verse', 'Blessing verse'), txt('reference', 'Reference')],
       prayer: [bg(), size(), txt('tag', 'Category tag'), area('request', 'Prayer request'), photo('photo', 'Photo (optional)', true)],
-      event: [bg(), size(), txt('title', 'Event title'), txt('subtitle', 'Subtitle'), txt('date', 'Date'), txt('time', 'Time'), txt('location', 'Location'), txt('cta', 'Call to action')],
+      event: [bg(), size(), photo('photo', 'Background photo (optional)', true), txt('title', 'Event title'), txt('subtitle', 'Subtitle'), txt('date', 'Date'), txt('time', 'Time'), txt('location', 'Location'), txt('cta', 'Call to action')],
       stat: [bg(), size(), txt('value', 'The number'), area('label', 'What it counts'), txt('context', 'Footnote'), photo('photo', 'Photo (optional)', true)],
       story: [bg(), size(), photo('photo', 'Photo', false), txt('name', 'Name'), area('quote', 'Their story')],
       testimony: [bg(), size(), photo('photo', 'Photo (optional)', true), area('quote', 'Testimony quote'), txt('name', 'Name'), txt('role', 'Role / context'), txt('reference', 'Verse reference (optional)')],

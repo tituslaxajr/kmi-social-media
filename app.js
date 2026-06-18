@@ -8,6 +8,50 @@
 (function () {
   'use strict';
 
+  // ---- Team credentials -----------------------------------------------
+  // Add or remove team members here. Passwords are case-sensitive.
+  const TEAM = {
+    'titus':   'kmi-admin',
+    'team':    'kmi-team'
+  };
+
+  const SESSION_KEY = 'kmi_auth';
+
+  function isAuthed() {
+    return sessionStorage.getItem(SESSION_KEY) === '1';
+  }
+
+  function renderLogin(errorMsg) {
+    document.body.style.background = 'var(--kapatid-blue)';
+    document.getElementById('root').innerHTML = `
+      <div class="login-wrap">
+        <div class="login-card">
+          <img src="assets/logo-transparent.png" class="login-logo" alt="Kapatid Ministry">
+          <h1 class="login-title">Content Studio</h1>
+          <p class="login-sub">Team access only</p>
+          ${errorMsg ? `<p class="login-error">${errorMsg}</p>` : ''}
+          <form id="loginForm" class="login-form">
+            <input id="loginUser" type="text" placeholder="Username" autocomplete="username" required>
+            <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" required>
+            <button type="submit">Sign in</button>
+          </form>
+        </div>
+      </div>
+    `;
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const user = document.getElementById('loginUser').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPass').value;
+      if (TEAM[user] && TEAM[user] === pass) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        document.body.style.background = '';
+        startApp();
+      } else {
+        renderLogin('Incorrect username or password.');
+      }
+    });
+  }
+
   // ---- Static config (ported from the design) -------------------------
   const TEMPLATES = [
     { id: 'verse',    name: 'Scripture verse',  desc: 'Brush-field verse card',     dot: '#df983f' },
@@ -579,6 +623,7 @@
           '</div>' +
         '</div>' +
         '<div style="display:flex; align-items:center; gap:10px;">' +
+          '<button data-action="logout" title="Sign out" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:999px; border:2px solid var(--app-border); background:var(--app-panel); color:var(--app-muted); font-size:16px; cursor:pointer;">⎋</button>' +
           '<button data-action="toggleDark" title="Toggle dark mode" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:999px; border:2px solid var(--app-border); background:var(--app-panel); color:var(--app-text); font-size:18px; cursor:pointer;">' + darkIcon + '</button>' +
           '<button data-action="copyCaption" style="display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 18px; border-radius:999px; border:2px solid var(--kapatid-blue); background:var(--app-panel); color:var(--kapatid-blue); font-weight:700; font-size:14px; cursor:pointer;">' + esc(copyLabel) + '</button>' +
           '<button data-action="download" style="display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 20px; border-radius:999px; border:2px solid var(--kapatid-coral); background:var(--kapatid-coral); color:var(--white); font-weight:700; font-size:14px; cursor:pointer;">' + esc(downloadLabel) + '</button>' +
@@ -769,6 +814,7 @@
       else if (action === 'setFormat') setFormat(t.dataset.fmt);
       else if (action === 'toggleDark') toggleDark();
       else if (action === 'copyCaption') copyCaption();
+      else if (action === 'logout') { sessionStorage.removeItem(SESSION_KEY); renderLogin(); }
       else if (action === 'download') download();
       else if (action === 'openUpload') openUpload(t.dataset.key);
       else if (action === 'openCrop') openCropModal(t.dataset.key);
@@ -794,6 +840,16 @@
     render();
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  function startApp() {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  }
+
+  function boot() {
+    if (isAuthed()) startApp();
+    else renderLogin();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

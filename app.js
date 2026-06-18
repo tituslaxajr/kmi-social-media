@@ -824,6 +824,44 @@
         try { if (selStart != null) target.setSelectionRange(selStart, selEnd); } catch (e) {}
       }
     }
+
+    // shrink text to keep every element inside the card (never grows past the user's size)
+    autoFit();
+  }
+
+  // ---- Auto-fit: scale text down until nothing overflows the card -------
+  function measureOverflow(card) {
+    const cr = card.getBoundingClientRect();
+    let worst = 0;
+    const els = card.querySelectorAll('*');
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      if (getComputedStyle(el).pointerEvents === 'none') continue; // decorative bleed layers
+      let hasText = false;
+      for (let n = el.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3 && n.textContent.trim()) { hasText = true; break; }
+      }
+      if (!hasText) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      const over = Math.max(0, cr.top - r.top, r.bottom - cr.bottom, cr.left - r.left, r.right - cr.right);
+      if (over > worst) worst = over;
+    }
+    return worst;
+  }
+
+  function autoFit() {
+    const card = document.getElementById('card');
+    if (!card) return;
+    const userScale = state.data[state.active].fontScale || 1;
+    const MIN = 0.5;
+    let fs = userScale;
+    card.style.setProperty('--fs', fs);
+    for (let i = 0; i < 16; i++) {
+      if (measureOverflow(card) <= 1 || fs <= MIN) break;
+      fs = Math.max(MIN, fs * 0.94);
+      card.style.setProperty('--fs', fs);
+    }
   }
 
   function pillTabStyle(on) {
@@ -972,6 +1010,11 @@
     });
 
     render();
+
+    // re-fit once web fonts finish loading (metrics change after load)
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { if (document.getElementById('card')) autoFit(); });
+    }
   }
 
   function startApp() {

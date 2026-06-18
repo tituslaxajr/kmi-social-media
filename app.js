@@ -60,6 +60,7 @@
     { id: 'event',    name: 'Event / campaign', desc: 'Invitation with details',    dot: '#c94d45' },
     { id: 'stat',     name: 'Impact stat',      desc: 'A number that matters',      dot: '#283891' },
     { id: 'story',    name: 'Story highlight',  desc: 'Photo + testimony',          dot: '#0b3a5c' },
+    { id: 'testimony',name: 'Testimony',        desc: 'A member’s words of faith',  dot: '#7e6c61' },
     { id: 'feeding',  name: 'Feeding Ministry', desc: 'Feeding site title card',    dot: '#1f8a5b' }
   ];
 
@@ -134,6 +135,15 @@
         name: 'Abegail',
         quote: 'Sponsored for 9 years — today she helps lead the very children’s ministry that first welcomed her.',
         caption: 'From sponsored child to servant leader. ✨\n\nAbegail was sponsored for 9 years. Today she helps lead the children’s ministry that first welcomed her — faith, made fruitful.\n\n#KapatidMinistry #Stories #FruitfulThroughChrist'
+      },
+      testimony: {
+        bg: 'blue', fontScale: 1,
+        photo: 'assets/photo-team-fellowship.svg',
+        name: 'Marites Bautista',
+        role: 'Feeding program parent',
+        quote: 'I first came only for a meal for my children. I stayed because, for the first time, I felt the love of Christ through people who knew my name.',
+        reference: '2 Corinthians 5:17',
+        caption: '“I first came only for a meal. I stayed because I felt the love of Christ through people who knew my name.” — Marites\n\nEvery week, God writes new stories of hope through this family. 🩷\n\n“If anyone is in Christ, the new creation has come.” — 2 Corinthians 5:17\n\n#KapatidMinistry #Testimony #FaithfulAndFruitful'
       },
       feeding: {
         bg: 'navy', fontScale: 1,
@@ -296,6 +306,68 @@
         logoImg('right:5cqw; bottom:5cqw; width:11cqw;', v.logoFilter, '.92') +
       '</div>';
     }
+    if (d.style === 'celebratory') {
+      return '' +
+      '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; overflow:hidden;">' +
+        '<div style="position:absolute; inset:-20%; background:repeating-conic-gradient(from 0deg at 50% 40%, rgba(255,255,255,.10) 0deg 5deg, transparent 5deg 13deg); pointer-events:none;"></div>' +
+        '<div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, rgba(252,176,64,.40), transparent 56%); pointer-events:none;"></div>' +
+        '<span style="position:absolute; left:8%; top:9%; width:8.5cqw; height:11cqw; background:var(--kapatid-gold); border-radius:50%; box-shadow:0 8px 16px -8px rgba(0,0,0,.45);"></span>' +
+        '<span style="position:absolute; left:12.5%; top:7.5%; width:6.5cqw; height:8.5cqw; background:var(--coral-bright); border-radius:50%; opacity:.92;"></span>' +
+        '<span style="position:absolute; right:9%; top:10%; width:7.5cqw; height:9.5cqw; background:var(--white); border-radius:50%; opacity:.85;"></span>' +
+        '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:7cqw 8cqw; gap:2.6cqw;">' +
+          '<div style="font-family:var(--font-script); font-size:calc(8cqw * var(--fs)); line-height:.9; color:var(--kapatid-gold);">Hip hip hooray!</div>' +
+          '<div style="width:34cqw; height:34cqw; border-radius:50%; border:1.4cqw solid var(--white); box-shadow:0 0 0 1cqw var(--kapatid-gold), 0 14px 30px -10px rgba(0,0,0,.5); overflow:hidden; position:relative;">' +
+            '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + ');"></div>' +
+          '</div>' +
+          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(10cqw * var(--fs)); line-height:.9; letter-spacing:-0.02em;">HAPPY BIRTHDAY</div>' +
+          '<div style="display:inline-block; background:var(--white); color:var(--kapatid-red); font-family:var(--font-display); font-weight:800; font-size:calc(5cqw * var(--fs)); padding:1.6cqw 5cqw; border-radius:999px; box-shadow:0 8px 18px -8px rgba(0,0,0,.45); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
+          '<div style="max-width:30ch; margin-top:1cqw;">' +
+            '<p style="margin:0; font-style:italic; font-weight:300; font-size:calc(3.2cqw * var(--fs)); line-height:1.35; opacity:.95;">"' + esc(d.verse) + '"</p>' +
+            '<div style="margin-top:1.4cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.18em; text-transform:uppercase; color:var(--kapatid-gold);">' + esc(d.reference) + '</div>' +
+          '</div>' +
+        '</div>' +
+        logoImg('right:5cqw; bottom:5cqw; width:11cqw;', v.logoFilter, '.92') +
+      '</div>';
+    }
+    if (d.style === 'cinematic') {
+      return '' +
+      '<div style="position:absolute; inset:0; background:#000; overflow:hidden;">' +
+        '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + ');"></div>' +
+        '<div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.88) 8%, rgba(0,0,0,.12) 46%, rgba(0,0,0,.58) 100%);"></div>' +
+        '<div style="position:absolute; inset:0; box-shadow:inset 0 0 26cqw rgba(0,0,0,.6); pointer-events:none;"></div>' +
+        '<div style="position:absolute; left:0; right:0; top:0; height:9%; background:#000;"></div>' +
+        '<div style="position:absolute; left:0; right:0; bottom:0; height:9%; background:#000;"></div>' +
+        '<div style="position:absolute; left:8cqw; right:8cqw; bottom:17cqw; color:var(--white); text-align:center;">' +
+          '<div style="font-size:calc(3cqw * var(--fs)); letter-spacing:0.42em; text-transform:uppercase; font-weight:600; opacity:.85;">Happy Birthday</div>' +
+          '<div style="margin:2.5cqw 0; font-family:var(--font-display); font-weight:800; font-size:calc(11cqw * var(--fs)); line-height:.95; letter-spacing:-0.01em; text-shadow:0 2px 18px rgba(0,0,0,.55);">' + esc(d.name) + '</div>' +
+          '<div style="width:14cqw; height:2px; background:var(--kapatid-gold); margin:0 auto 3cqw;"></div>' +
+          '<p style="margin:0 auto; max-width:30ch; font-style:italic; font-weight:300; font-size:calc(3.4cqw * var(--fs)); line-height:1.4; opacity:.92;">"' + esc(d.verse) + '"</p>' +
+          '<div style="margin-top:1.6cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; color:var(--kapatid-gold);">' + esc(d.reference) + '</div>' +
+        '</div>' +
+        logoImg('right:6cqw; bottom:11.5%; width:10cqw;', 'brightness(0) invert(1)', '.9') +
+      '</div>';
+    }
+    if (d.style === 'vintage') {
+      return '' +
+      '<div style="position:absolute; inset:0; background:var(--paper); color:var(--taupe-800); overflow:hidden;">' +
+        '<div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 30%, rgba(255,255,255,.45), transparent 62%), repeating-linear-gradient(0deg, rgba(123,108,97,.035) 0 2px, transparent 2px 4px); pointer-events:none;"></div>' +
+        '<div style="position:absolute; inset:4cqw; border:2px solid var(--taupe-500);"></div>' +
+        '<div style="position:absolute; inset:5.4cqw; border:1px solid var(--taupe-400);"></div>' +
+        '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:11cqw 10cqw; gap:2.4cqw;">' +
+          '<div style="font-size:5cqw; color:var(--taupe-500); line-height:1;">❦</div>' +
+          ornRule() +
+          '<div style="font-family:var(--font-script); font-size:calc(9cqw * var(--fs)); line-height:.9; color:var(--kapatid-red);">Happy Birthday</div>' +
+          '<div style="width:30cqw; height:30cqw; border-radius:50%; overflow:hidden; position:relative; box-shadow:0 0 0 0.7cqw var(--paper), 0 0 0 1.1cqw var(--taupe-500);">' +
+            '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + '); filter:sepia(.5) contrast(.95) brightness(1.02);"></div>' +
+          '</div>' +
+          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(7.5cqw * var(--fs)); line-height:1; letter-spacing:0.02em; text-transform:uppercase; color:var(--taupe-800); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
+          ornRule() +
+          '<p style="margin:0; font-style:italic; font-weight:400; font-size:calc(3.2cqw * var(--fs)); line-height:1.4; max-width:28ch; color:var(--taupe-700);">"' + esc(d.verse) + '"</p>' +
+          '<div style="font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; color:var(--kapatid-red);">' + esc(d.reference) + '</div>' +
+        '</div>' +
+        logoImg('right:6.5cqw; bottom:6.5cqw; width:10cqw;', 'none', '.85') +
+      '</div>';
+    }
     // classic
     return '' +
     '<div style="position:absolute; inset:0; overflow:hidden; display:flex; flex-direction:column;">' +
@@ -429,6 +501,34 @@
     '</div>';
   }
 
+  function cardTestimony(v) {
+    const d = v.d;
+    const tCrop = getCrop(d, 'photo');
+    const avatar = d.photo
+      ? '<div style="width:15cqw; height:15cqw; border-radius:50%; overflow:hidden; flex:0 0 auto; position:relative; box-shadow:0 0 0 0.7cqw rgba(255,255,255,.16);">' +
+          '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + tCrop.x + '% ' + tCrop.y + '%; transform-origin:' + tCrop.x + '% ' + tCrop.y + '%; transform:scale(' + (tCrop.zoom || 1) + ');"></div>' +
+        '</div>'
+      : '';
+    return '' +
+    '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:center; padding:9cqw;">' +
+      '<div style="position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 6px, rgba(0,0,0,.04) 6px 13px); mix-blend-mode:soft-light; pointer-events:none;"></div>' +
+      '<div style="position:relative;">' +
+        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold); margin-bottom:2cqw;">Testimony</div>' +
+        '<div style="font-family:var(--font-display); font-weight:800; font-size:26cqw; line-height:.78; color:var(--kapatid-gold); opacity:.55; height:13cqw; overflow:visible;">“</div>' +
+        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(6cqw * var(--fs)); line-height:1.2; letter-spacing:-0.01em; max-width:24ch;">' + esc(d.quote) + '</p>' +
+        (d.reference ? '<div style="margin-top:4cqw; font-weight:700; font-size:calc(3cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
+        '<div style="margin-top:6cqw; display:flex; align-items:center; gap:4cqw;">' +
+          avatar +
+          '<div style="min-width:0;">' +
+            '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
+            (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      logoImg('right:6cqw; bottom:6cqw; width:12cqw;', v.logoFilter, '.92') +
+    '</div>';
+  }
+
   function cardFeeding(v) {
     const d = v.d;
     return '' +
@@ -463,6 +563,13 @@
   }
 
   function conf(s) { return '<span style="position:absolute; ' + s + '"></span>'; }
+  function ornRule() {
+    return '<div style="display:flex; align-items:center; gap:2cqw; width:40cqw;">' +
+      '<span style="flex:1; height:1px; background:var(--taupe-400);"></span>' +
+      '<span style="font-size:2.4cqw; color:var(--kapatid-gold); transform:rotate(45deg);">◆</span>' +
+      '<span style="flex:1; height:1px; background:var(--taupe-400);"></span>' +
+    '</div>';
+  }
   function logoImg(pos, filter, opacity) {
     return '<img src="assets/logo-transparent.png" alt="" style="position:absolute; ' + pos +
       ' height:auto; filter:' + filter + '; opacity:' + opacity + '; z-index:5;">';
@@ -476,6 +583,7 @@
       case 'event': return cardEvent(v);
       case 'stat': return cardStat(v);
       case 'story': return cardStory(v);
+      case 'testimony': return cardTestimony(v);
       case 'feeding': return cardFeeding(v);
       default: return '';
     }
@@ -492,11 +600,12 @@
     const photo = (key, label, allowNone) => ({ key, label, type: 'photo', value: d[key], allowNone });
     const map = {
       verse: [bg(), size(), txt('headline', 'Headline phrase'), area('body', 'Verse text'), txt('reference', 'Reference')],
-      birthday: [choice('style', 'Layout style', [{ label: 'Classic', v: 'classic' }, { label: 'Festive', v: 'festive' }]), bg(), size(), txt('name', 'Celebrant name'), photo('photo', 'Photo', false), area('verse', 'Blessing verse'), txt('reference', 'Reference')],
+      birthday: [choice('style', 'Layout style', [{ label: 'Classic', v: 'classic' }, { label: 'Festive', v: 'festive' }, { label: 'Celebratory', v: 'celebratory' }, { label: 'Cinematic', v: 'cinematic' }, { label: 'Vintage', v: 'vintage' }]), bg(), size(), txt('name', 'Celebrant name'), photo('photo', 'Photo', false), area('verse', 'Blessing verse'), txt('reference', 'Reference')],
       prayer: [bg(), size(), txt('tag', 'Category tag'), area('request', 'Prayer request'), photo('photo', 'Photo (optional)', true)],
       event: [bg(), size(), txt('title', 'Event title'), txt('subtitle', 'Subtitle'), txt('date', 'Date'), txt('time', 'Time'), txt('location', 'Location'), txt('cta', 'Call to action')],
       stat: [bg(), size(), txt('value', 'The number'), area('label', 'What it counts'), txt('context', 'Footnote'), photo('photo', 'Photo (optional)', true)],
       story: [bg(), size(), photo('photo', 'Photo', false), txt('name', 'Name'), area('quote', 'Their story')],
+      testimony: [bg(), size(), photo('photo', 'Photo (optional)', true), area('quote', 'Testimony quote'), txt('name', 'Name'), txt('role', 'Role / context'), txt('reference', 'Verse reference (optional)')],
       feeding: [bg(), size(), photo('photo', 'Background photo', false), txt('area', 'Feeding area name'), txt('location', 'Location'), txt('date', 'Date'), txt('count', 'Children served')]
     };
     return map[a];
@@ -525,7 +634,7 @@
       control = '<div style="display:inline-flex; background:var(--app-sunken); border:1px solid var(--app-border); border-radius:999px; padding:4px; gap:3px;">' + opts + '</div>';
     } else if (f.type === 'choice') {
       const opts = f.choices.map(o => pill(f.key, o.v, o.label, f.value === o.v, true)).join('');
-      control = '<div style="display:inline-flex; background:var(--app-sunken); border:1px solid var(--app-border); border-radius:999px; padding:4px; gap:3px;">' + opts + '</div>';
+      control = '<div style="display:flex; flex-wrap:wrap; background:var(--app-sunken); border:1px solid var(--app-border); border-radius:18px; padding:4px; gap:3px;">' + opts + '</div>';
     } else if (f.type === 'photo') {
       control = renderPhotoField(f);
     }

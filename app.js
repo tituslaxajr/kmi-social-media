@@ -225,12 +225,25 @@
     const a = state.active;
     const d = state.data[a];
     const fmt = state.format;
-    const light = d.bg === 'cream';
+    // Light backgrounds (gold + cream) need dark ink and a dark accent;
+    // the gold highlight is invisible on gold and weak on cream.
+    const light = (d.bg === 'cream' || d.bg === 'gold');
     const ink = light ? 'var(--ink-900)' : 'var(--white)';
+    const accent = light ? 'var(--kapatid-blue)' : 'var(--kapatid-gold)';
+    const onAccent = light ? 'var(--white)' : 'var(--ink-900)';
+    const decoFaint = light ? 'rgba(0,0,0,.10)' : 'rgba(255,255,255,.14)';
+    const confettiNeutral = light ? 'var(--ink-700)' : 'var(--white)';
     const rgb = BG_RGB[d.bg] || BG_RGB.navy;
-    const storyOverlay = 'linear-gradient(to top, rgba(' + rgb + ',.96) 16%, rgba(' + rgb + ',.55) 48%, rgba(' + rgb + ',.12) 78%)';
+    const tint = 'rgba(' + rgb + ',';
+    // Photo cards: a dark legibility scrim under the brand tint, so white text
+    // and gold accents stay readable over the photo on ANY chosen background.
+    const storyOverlay =
+      'linear-gradient(to top, rgba(0,0,0,.74) 4%, rgba(0,0,0,.34) 38%, rgba(0,0,0,0) 70%), ' +
+      'linear-gradient(to top, ' + tint + '.60) 10%, ' + tint + '.20) 50%, ' + tint + '0) 82%)';
     return {
       a: a, d: d, fmt: fmt, light: light, ink: ink,
+      accent: accent, onAccent: onAccent, decoFaint: decoFaint,
+      confettiNeutral: confettiNeutral, rgb: rgb, tint: tint,
       storyOverlay: storyOverlay,
       bgColor: BG[d.bg] || BG.blue,
       logoFilter: light ? 'none' : 'brightness(0) invert(1)',
@@ -274,56 +287,62 @@
     const d = v.d;
     const bCrop = getCrop(d, 'photo');
     if (d.style === 'festive') {
+      const cA = v.accent, cN = v.confettiNeutral, cC = 'var(--coral-bright)';
       return '' +
       '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; overflow:hidden;">' +
         '<div style="position:absolute; inset:0; pointer-events:none;">' +
-          conf('left:7%; top:11%; width:3.4cqw; height:3.4cqw; background:var(--kapatid-gold); border-radius:2px; transform:rotate(24deg);') +
-          conf('left:15%; top:27%; width:2.8cqw; height:2.8cqw; background:var(--white); border-radius:50%;') +
-          conf('left:9%; top:55%; width:3.2cqw; height:1.4cqw; background:var(--coral-bright); border-radius:2px; transform:rotate(-18deg);') +
-          conf('left:17%; top:78%; width:2.6cqw; height:2.6cqw; background:var(--kapatid-gold); border-radius:50%;') +
-          conf('left:33%; top:91%; width:3.4cqw; height:1.5cqw; background:var(--white); border-radius:2px; transform:rotate(12deg);') +
-          conf('left:46%; top:5%; width:3cqw; height:1.4cqw; background:var(--kapatid-gold); border-radius:2px; transform:rotate(18deg);') +
-          conf('right:8%; top:13%; width:3cqw; height:3cqw; background:var(--coral-bright); border-radius:50%;') +
-          conf('right:14%; top:30%; width:3.4cqw; height:1.5cqw; background:var(--kapatid-gold); border-radius:2px; transform:rotate(-22deg);') +
-          conf('right:8%; top:56%; width:3.2cqw; height:1.5cqw; background:var(--white); border-radius:2px; transform:rotate(14deg);') +
-          conf('right:16%; top:77%; width:2.6cqw; height:2.6cqw; background:var(--kapatid-gold); border-radius:50%;') +
-          conf('right:31%; top:91%; width:3.2cqw; height:1.5cqw; background:var(--coral-bright); border-radius:2px; transform:rotate(-8deg);') +
-          conf('right:40%; top:7%; width:2.6cqw; height:2.6cqw; background:var(--white); border-radius:50%;') +
-          '<span style="position:absolute; left:5%; top:6%; font-size:5cqw; line-height:1; color:var(--kapatid-gold); font-weight:800; opacity:.85;">✳</span>' +
-          '<span style="position:absolute; right:5%; top:9%; font-size:4cqw; line-height:1; color:rgba(255,255,255,.65); font-weight:800;">✳</span>' +
+          conf('left:7%; top:11%; width:3.4cqw; height:3.4cqw; background:' + cA + '; border-radius:2px; transform:rotate(24deg);') +
+          conf('left:15%; top:27%; width:2.8cqw; height:2.8cqw; background:' + cN + '; border-radius:50%;') +
+          conf('left:9%; top:55%; width:3.2cqw; height:1.4cqw; background:' + cC + '; border-radius:2px; transform:rotate(-18deg);') +
+          conf('left:17%; top:78%; width:2.6cqw; height:2.6cqw; background:' + cA + '; border-radius:50%;') +
+          conf('left:33%; top:91%; width:3.4cqw; height:1.5cqw; background:' + cN + '; border-radius:2px; transform:rotate(12deg);') +
+          conf('left:46%; top:5%; width:3cqw; height:1.4cqw; background:' + cA + '; border-radius:2px; transform:rotate(18deg);') +
+          conf('right:8%; top:13%; width:3cqw; height:3cqw; background:' + cC + '; border-radius:50%;') +
+          conf('right:14%; top:30%; width:3.4cqw; height:1.5cqw; background:' + cA + '; border-radius:2px; transform:rotate(-22deg);') +
+          conf('right:8%; top:56%; width:3.2cqw; height:1.5cqw; background:' + cN + '; border-radius:2px; transform:rotate(14deg);') +
+          conf('right:16%; top:77%; width:2.6cqw; height:2.6cqw; background:' + cA + '; border-radius:50%;') +
+          conf('right:31%; top:91%; width:3.2cqw; height:1.5cqw; background:' + cC + '; border-radius:2px; transform:rotate(-8deg);') +
+          conf('right:40%; top:7%; width:2.6cqw; height:2.6cqw; background:' + cN + '; border-radius:50%;') +
+          '<span style="position:absolute; left:5%; top:6%; font-size:5cqw; line-height:1; color:' + cA + '; font-weight:800; opacity:.85;">✳</span>' +
+          '<span style="position:absolute; right:5%; top:9%; font-size:4cqw; line-height:1; color:' + v.decoFaint + '; font-weight:800;">✳</span>' +
         '</div>' +
         '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6cqw 8cqw; text-align:center; gap:2.4cqw;">' +
-          '<div style="width:32cqw; height:32cqw; border-radius:50%; border:1.2cqw solid var(--white); box-shadow:0 0 0 0.8cqw var(--kapatid-gold), 0 10px 24px -8px rgba(0,0,0,.45); flex:0 0 auto; overflow:hidden; position:relative;">' +
+          '<div style="width:32cqw; height:32cqw; border-radius:50%; border:1.2cqw solid var(--white); box-shadow:0 0 0 0.8cqw ' + cA + ', 0 10px 24px -8px rgba(0,0,0,.45); flex:0 0 auto; overflow:hidden; position:relative;">' +
             '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + ');"></div>' +
           '</div>' +
-          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(8.5cqw * var(--fs)); line-height:.92; letter-spacing:-0.01em; transform:rotate(-1.5deg);">HAPPY <span style="color:var(--kapatid-gold);">BIRTHDAY!</span></div>' +
-          '<div style="display:inline-block; transform:rotate(-2deg); background:var(--kapatid-gold); color:var(--ink-900); font-family:var(--font-display); font-weight:800; font-size:calc(4.4cqw * var(--fs)); padding:1.8cqw 4.5cqw; border-radius:8px; box-shadow:0 6px 16px -6px rgba(0,0,0,.4); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
+          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(8.5cqw * var(--fs)); line-height:.92; letter-spacing:-0.01em; transform:rotate(-1.5deg);">HAPPY <span style="color:' + cA + ';">BIRTHDAY!</span></div>' +
+          '<div style="display:inline-block; transform:rotate(-2deg); background:' + cA + '; color:' + v.onAccent + '; font-family:var(--font-display); font-weight:800; font-size:calc(4.4cqw * var(--fs)); padding:1.8cqw 4.5cqw; border-radius:8px; box-shadow:0 6px 16px -6px rgba(0,0,0,.4); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
           '<div style="max-width:30ch;">' +
             '<p style="margin:0; font-style:italic; font-weight:300; font-size:calc(3.2cqw * var(--fs)); line-height:1.35; opacity:.92;">"' + esc(d.verse) + '"</p>' +
-            '<div style="margin-top:1.5cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.18em; text-transform:uppercase; color:var(--kapatid-gold);">' + esc(d.reference) + '</div>' +
+            '<div style="margin-top:1.5cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.18em; text-transform:uppercase; color:' + cA + ';">' + esc(d.reference) + '</div>' +
           '</div>' +
         '</div>' +
         logoImg('right:5cqw; bottom:5cqw; width:11cqw;', v.logoFilter, '.92') +
       '</div>';
     }
     if (d.style === 'celebratory') {
+      const cA = v.accent;
+      const rays = v.light ? 'rgba(0,0,0,.05)' : 'rgba(255,255,255,.10)';
+      const glow = v.light ? 'rgba(40,56,145,.16)' : 'rgba(252,176,64,.40)';
+      const pillBg = v.light ? 'var(--kapatid-red)' : 'var(--white)';
+      const pillText = v.light ? 'var(--white)' : 'var(--kapatid-red)';
       return '' +
       '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; overflow:hidden;">' +
-        '<div style="position:absolute; inset:-20%; background:repeating-conic-gradient(from 0deg at 50% 40%, rgba(255,255,255,.10) 0deg 5deg, transparent 5deg 13deg); pointer-events:none;"></div>' +
-        '<div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, rgba(252,176,64,.40), transparent 56%); pointer-events:none;"></div>' +
-        '<span style="position:absolute; left:8%; top:9%; width:8.5cqw; height:11cqw; background:var(--kapatid-gold); border-radius:50%; box-shadow:0 8px 16px -8px rgba(0,0,0,.45);"></span>' +
+        '<div style="position:absolute; inset:-20%; background:repeating-conic-gradient(from 0deg at 50% 40%, ' + rays + ' 0deg 5deg, transparent 5deg 13deg); pointer-events:none;"></div>' +
+        '<div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, ' + glow + ', transparent 56%); pointer-events:none;"></div>' +
+        '<span style="position:absolute; left:8%; top:9%; width:8.5cqw; height:11cqw; background:' + cA + '; border-radius:50%; box-shadow:0 8px 16px -8px rgba(0,0,0,.45);"></span>' +
         '<span style="position:absolute; left:12.5%; top:7.5%; width:6.5cqw; height:8.5cqw; background:var(--coral-bright); border-radius:50%; opacity:.92;"></span>' +
-        '<span style="position:absolute; right:9%; top:10%; width:7.5cqw; height:9.5cqw; background:var(--white); border-radius:50%; opacity:.85;"></span>' +
-        '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:7cqw 8cqw; gap:2.6cqw;">' +
-          '<div style="font-family:var(--font-script); font-size:calc(8cqw * var(--fs)); line-height:.9; color:var(--kapatid-gold);">Hip hip hooray!</div>' +
-          '<div style="width:34cqw; height:34cqw; border-radius:50%; border:1.4cqw solid var(--white); box-shadow:0 0 0 1cqw var(--kapatid-gold), 0 14px 30px -10px rgba(0,0,0,.5); overflow:hidden; position:relative;">' +
+        '<span style="position:absolute; right:9%; top:10%; width:7.5cqw; height:9.5cqw; background:' + v.confettiNeutral + '; border-radius:50%; opacity:.85;"></span>' +
+        '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:6cqw 8cqw; gap:2cqw;">' +
+          '<div style="font-family:var(--font-script); font-size:calc(6.5cqw * var(--fs)); line-height:.9; color:' + cA + ';">Hip hip hooray!</div>' +
+          '<div style="width:28cqw; height:28cqw; border-radius:50%; border:1.2cqw solid var(--white); box-shadow:0 0 0 0.9cqw ' + cA + ', 0 14px 30px -10px rgba(0,0,0,.5); overflow:hidden; position:relative;">' +
             '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + ');"></div>' +
           '</div>' +
-          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(10cqw * var(--fs)); line-height:.9; letter-spacing:-0.02em;">HAPPY BIRTHDAY</div>' +
-          '<div style="display:inline-block; background:var(--white); color:var(--kapatid-red); font-family:var(--font-display); font-weight:800; font-size:calc(5cqw * var(--fs)); padding:1.6cqw 5cqw; border-radius:999px; box-shadow:0 8px 18px -8px rgba(0,0,0,.45); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
-          '<div style="max-width:30ch; margin-top:1cqw;">' +
+          '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(9cqw * var(--fs)); line-height:.9; letter-spacing:-0.02em;">HAPPY BIRTHDAY</div>' +
+          '<div style="display:inline-block; background:' + pillBg + '; color:' + pillText + '; font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); padding:1.5cqw 5cqw; border-radius:999px; box-shadow:0 8px 18px -8px rgba(0,0,0,.45); max-width:80cqw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(d.name) + '</div>' +
+          '<div style="max-width:30ch; margin-top:0.4cqw;">' +
             '<p style="margin:0; font-style:italic; font-weight:300; font-size:calc(3.2cqw * var(--fs)); line-height:1.35; opacity:.95;">"' + esc(d.verse) + '"</p>' +
-            '<div style="margin-top:1.4cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.18em; text-transform:uppercase; color:var(--kapatid-gold);">' + esc(d.reference) + '</div>' +
+            '<div style="margin-top:1.4cqw; font-weight:700; font-size:calc(2.6cqw * var(--fs)); letter-spacing:0.18em; text-transform:uppercase; color:' + cA + ';">' + esc(d.reference) + '</div>' +
           '</div>' +
         '</div>' +
         logoImg('right:5cqw; bottom:5cqw; width:11cqw;', v.logoFilter, '.92') +
@@ -374,13 +393,13 @@
       '<div style="flex:0 0 52%; position:relative; overflow:hidden;">' +
         '<div style="position:absolute; inset:0; background-image:url(\'' + attr(d.photo) + '\'); background-size:cover; background-position:' + bCrop.x + '% ' + bCrop.y + '%; transform-origin:' + bCrop.x + '% ' + bCrop.y + '%; transform:scale(' + (bCrop.zoom || 1) + ');"></div>' +
       '</div>' +
-      '<div style="height:1.2cqw; background:var(--kapatid-gold); flex:0 0 auto;"></div>' +
+      '<div style="height:1.2cqw; background:' + v.accent + '; flex:0 0 auto;"></div>' +
       '<div style="flex:1 1 auto; min-height:0; background:' + v.bgColor + '; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:center; padding:5cqw 7cqw 7cqw; overflow:hidden;">' +
-        '<div style="font-family:var(--font-script); font-size:calc(7.5cqw * var(--fs)); line-height:1.1; color:var(--kapatid-gold);">Happy Birthday</div>' +
+        '<div style="font-family:var(--font-script); font-size:calc(7.5cqw * var(--fs)); line-height:1.1; color:' + v.accent + ';">Happy Birthday</div>' +
         '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(9cqw * var(--fs)); line-height:.92; letter-spacing:-0.01em; margin-top:1.5cqw; padding-right:14cqw;">' + esc(d.name) + '</div>' +
-        '<div style="margin-top:3cqw; width:10cqw; height:2px; background:var(--kapatid-gold);"></div>' +
+        '<div style="margin-top:3cqw; width:10cqw; height:2px; background:' + v.accent + ';"></div>' +
         '<p style="margin:2.5cqw 0 0; font-style:italic; font-weight:300; font-size:calc(3.4cqw * var(--fs)); line-height:1.4; max-width:28ch; opacity:.9;">"' + esc(d.verse) + '"</p>' +
-        '<div style="margin-top:1.5cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; color:var(--kapatid-gold);">' + esc(d.reference) + '</div>' +
+        '<div style="margin-top:1.5cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; color:' + v.accent + ';">' + esc(d.reference) + '</div>' +
       '</div>' +
       logoImg('right:5cqw; bottom:5cqw; width:11cqw;', v.logoFilter, '.95') +
     '</div>';
@@ -393,11 +412,11 @@
       inner =
         '<div style="position:absolute; inset:0; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:center; padding:9cqw;">' +
           '<div style="position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 6px, rgba(0,0,0,.04) 6px 13px); mix-blend-mode:soft-light; pointer-events:none;"></div>' +
-          '<div style="position:absolute; right:7cqw; top:6cqw; font-size:18cqw; line-height:1; color:rgba(255,255,255,.14); font-weight:800;">✳</div>' +
+          '<div style="position:absolute; right:7cqw; top:6cqw; font-size:18cqw; line-height:1; color:' + v.decoFaint + '; font-weight:800;">✳</div>' +
           '<div style="position:relative; padding-right:14cqw;">' +
             '<div style="font-size:16px; letter-spacing:0.26em; text-transform:uppercase; font-weight:700; opacity:.82;">pray with us</div>' +
             '<h2 style="margin:3cqw 0 5cqw; font-family:var(--font-display); font-weight:800; font-size:calc(11cqw * var(--fs)); line-height:1.0; letter-spacing:-0.01em;">Prayer Focus</h2>' +
-            '<div style="display:inline-flex; align-items:center; background:var(--kapatid-gold); color:var(--ink-900); padding:2cqw 4.4cqw; border-radius:999px; font-weight:700; font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.06em; margin-bottom:5cqw;">' + esc(d.tag) + '</div>' +
+            '<div style="display:inline-flex; align-items:center; background:' + v.accent + '; color:' + v.onAccent + '; padding:2cqw 4.4cqw; border-radius:999px; font-weight:700; font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.06em; margin-bottom:5cqw;">' + esc(d.tag) + '</div>' +
             '<p style="margin:0; font-weight:300; font-size:calc(5cqw * var(--fs)); line-height:1.4; max-width:24ch;">' + esc(d.request) + '</p>' +
           '</div>' +
         '</div>';
@@ -408,34 +427,34 @@
         '<div style="position:absolute; left:8cqw; right:8cqw; top:8cqw; z-index:2;">' +
           '<div style="display:inline-flex; align-items:center; background:var(--kapatid-gold); color:var(--ink-900); padding:1.8cqw 4cqw; border-radius:999px; font-weight:700; font-size:calc(3.2cqw * var(--fs)); letter-spacing:0.06em;">' + esc(d.tag) + '</div>' +
         '</div>' +
-        '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:' + v.ink + '; z-index:2;">' +
+        '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:var(--white); z-index:2;">' +
           '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold);">Let us pray together</div>' +
           '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(9cqw * var(--fs)); line-height:1; margin:2cqw 0 3cqw;">Prayer Focus</div>' +
           '<p style="margin:0; font-weight:300; font-size:calc(4.2cqw * var(--fs)); line-height:1.4; max-width:30ch;">' + esc(d.request) + '</p>' +
         '</div>';
     }
     return '<div style="position:absolute; inset:0; background:' + v.bgColor + '; overflow:hidden;">' + inner +
-      logoImg('right:7cqw; bottom:6cqw; width:12cqw;', v.logoFilter, '.92') + '</div>';
+      logoImg('right:7cqw; bottom:6cqw; width:12cqw;', d.photo ? 'brightness(0) invert(1)' : v.logoFilter, '.92') + '</div>';
   }
 
   function cardEvent(v) {
     const d = v.d;
     return '' +
     '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; display:flex; flex-direction:column; justify-content:space-between; padding:9cqw;">' +
-      '<div style="position:absolute; left:6cqw; top:7cqw; font-size:7cqw; color:rgba(255,255,255,.5); font-weight:800;">✳</div>' +
-      '<div style="position:absolute; right:8cqw; bottom:24cqw; font-size:5cqw; color:rgba(255,255,255,.45); font-weight:800;">✳</div>' +
+      '<div style="position:absolute; left:6cqw; top:7cqw; font-size:7cqw; color:' + v.decoFaint + '; font-weight:800;">✳</div>' +
+      '<div style="position:absolute; right:8cqw; bottom:24cqw; font-size:5cqw; color:' + v.decoFaint + '; font-weight:800;">✳</div>' +
       '<div style="position:relative;">' +
-        '<div style="font-size:17px; letter-spacing:0.28em; text-transform:uppercase; font-weight:700; opacity:.85; margin-top:3cqw;">You’re invited</div>' +
-        '<h2 style="margin:4cqw 0 2cqw; font-family:var(--font-display); font-weight:800; font-size:calc(11cqw * var(--fs)); line-height:1.0; letter-spacing:-0.015em;">' + esc(d.title) + '</h2>' +
-        '<div style="font-family:var(--font-script); font-size:calc(7cqw * var(--fs)); line-height:1; color:var(--kapatid-gold);">' + esc(d.subtitle) + '</div>' +
+        '<div style="font-size:17px; letter-spacing:0.28em; text-transform:uppercase; font-weight:700; opacity:.85; margin-top:1cqw;">You’re invited</div>' +
+        '<h2 style="margin:2.5cqw 0 1.5cqw; font-family:var(--font-display); font-weight:800; font-size:calc(11cqw * var(--fs)); line-height:1.0; letter-spacing:-0.015em;">' + esc(d.title) + '</h2>' +
+        '<div style="font-family:var(--font-script); font-size:calc(7cqw * var(--fs)); line-height:1; color:' + v.accent + ';">' + esc(d.subtitle) + '</div>' +
       '</div>' +
-      '<div style="position:relative; display:flex; flex-direction:column; gap:3.4cqw; padding-right:16cqw;">' +
+      '<div style="position:relative; display:flex; flex-direction:column; gap:2.6cqw; padding-right:16cqw;">' +
         '<div style="height:2px; background:rgba(125,125,125,.4);"></div>' +
         '<div style="display:flex; gap:6cqw;">' +
           eventField('Date', d.date) + eventField('Time', d.time) +
         '</div>' +
         eventField('Place', d.location) +
-        '<div style="display:inline-flex; align-self:flex-start; align-items:center; background:' + v.ctaBg + '; color:' + v.ctaText + '; padding:3cqw 5.5cqw; border-radius:999px; font-weight:700; font-size:calc(3.6cqw * var(--fs)); margin-top:1cqw;">' + esc(d.cta) + '</div>' +
+        '<div style="display:inline-flex; align-self:flex-start; align-items:center; max-width:100%; background:' + v.ctaBg + '; color:' + v.ctaText + '; padding:2.6cqw 5.5cqw; border-radius:24px; font-weight:700; font-size:calc(3.6cqw * var(--fs)); line-height:1.25; margin-top:0.5cqw; white-space:normal; overflow-wrap:anywhere;">' + esc(d.cta) + '</div>' +
       '</div>' +
       logoImg('right:6cqw; bottom:6cqw; width:12cqw;', v.logoFilter, '.92') +
     '</div>';
@@ -456,11 +475,11 @@
           '<div style="position:absolute; left:9cqw; top:8cqw; right:9cqw;">' +
             '<span style="font-size:calc(3.6cqw * var(--fs)); letter-spacing:0.24em; text-transform:uppercase; font-weight:700; opacity:.7;">Our impact</span>' +
           '</div>' +
-          '<div style="font-size:9cqw; color:var(--kapatid-gold); line-height:1; font-weight:800;">✳</div>' +
+          '<div style="font-size:9cqw; color:' + v.accent + '; line-height:1; font-weight:800;">✳</div>' +
           '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(34cqw * var(--fs)); line-height:.88; letter-spacing:-0.02em; color:' + v.statNumber + ';">' + esc(d.value) + '</div>' +
           '<p style="margin:3cqw 0 0; font-weight:500; font-size:calc(5cqw * var(--fs)); line-height:1.25; max-width:18ch; opacity:.92;">' + esc(d.label) + '</p>' +
           '<div style="position:absolute; left:9cqw; bottom:8cqw; display:flex; align-items:center; gap:3cqw;">' +
-            '<span style="width:8cqw; height:3px; background:var(--kapatid-gold);"></span>' +
+            '<span style="width:8cqw; height:3px; background:' + v.accent + ';"></span>' +
             '<span style="font-size:calc(3.2cqw * var(--fs)); letter-spacing:0.1em; text-transform:uppercase; font-weight:700; opacity:.7;">' + esc(d.context) + '</span>' +
           '</div>' +
         '</div>';
@@ -471,7 +490,7 @@
         '<div style="position:absolute; left:8cqw; right:8cqw; top:8cqw; z-index:2;">' +
           '<span style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.24em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold);">Our impact</span>' +
         '</div>' +
-        '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:' + v.ink + '; z-index:2;">' +
+        '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:var(--white); z-index:2;">' +
           '<div style="display:flex; align-items:baseline; gap:3cqw;">' +
             '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(24cqw * var(--fs)); line-height:.85; letter-spacing:-0.02em;">' + esc(d.value) + '</div>' +
           '</div>' +
@@ -483,7 +502,7 @@
         '</div>';
     }
     return '<div style="position:absolute; inset:0; background:' + v.bgColor + '; overflow:hidden;">' + inner +
-      logoImg('right:9cqw; bottom:8cqw; width:12cqw;', v.logoFilter, '.92') + '</div>';
+      logoImg('right:9cqw; bottom:8cqw; width:12cqw;', d.photo ? 'brightness(0) invert(1)' : v.logoFilter, '.92') + '</div>';
   }
 
   function cardStory(v) {
@@ -492,8 +511,8 @@
     '<div style="position:absolute; inset:0; background:' + v.bgColor + ';">' +
       photoHTML(d.photo, getCrop(d, 'photo')) +
       '<div style="position:absolute; inset:0; background:' + v.storyOverlay + ';"></div>' +
-      logoImg('right:6cqw; bottom:6cqw; width:11cqw;', v.logoFilter, '1') +
-      '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:' + v.ink + '; z-index:2;">' +
+      logoImg('right:6cqw; bottom:6cqw; width:11cqw;', 'brightness(0) invert(1)', '1') +
+      '<div style="position:absolute; left:8cqw; right:20cqw; bottom:8cqw; color:var(--white); z-index:2;">' +
         '<div style="font-size:calc(3.6cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold);">Stories</div>' +
         '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(11cqw * var(--fs)); line-height:1; margin:3cqw 0 3cqw;">' + esc(d.name) + '</div>' +
         '<p style="margin:0; font-weight:300; font-size:calc(4.6cqw * var(--fs)); line-height:1.4; max-width:30ch;">' + esc(d.quote) + '</p>' +
@@ -503,8 +522,13 @@
 
   function cardTestimony(v) {
     const d = v.d;
-    const rgb = BG_RGB[d.bg] || BG_RGB.navy;
-    const leftGrad = 'linear-gradient(to right, rgba(' + rgb + ',.97) 30%, rgba(' + rgb + ',.86) 45%, rgba(' + rgb + ',.45) 65%, rgba(' + rgb + ',0) 90%)';
+    // Over a photo: white text + gold accent on a dark-anchored left scrim, so it
+    // reads on any background. No photo: adaptive ink + accent on the solid color.
+    const ink = d.photo ? 'var(--white)' : v.ink;
+    const accent = d.photo ? 'var(--kapatid-gold)' : v.accent;
+    const leftGrad =
+      'linear-gradient(to right, rgba(0,0,0,.42) 0%, rgba(0,0,0,.12) 42%, rgba(0,0,0,0) 70%), ' +
+      'linear-gradient(to right, ' + v.tint + '.92) 26%, ' + v.tint + '.55) 48%, ' + v.tint + '0) 84%)';
     const layer = d.photo
       ? photoHTML(d.photo, getCrop(d, 'photo')) +
         '<div style="position:absolute; inset:0; background:' + leftGrad + ';"></div>'
@@ -512,18 +536,18 @@
     const textW = d.photo ? '60%' : '78%';
     const content =
       '<div style="max-width:' + textW + ';">' +
-        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:var(--kapatid-gold); margin-bottom:1.5cqw;">Testimony</div>' +
-        '<div style="font-family:var(--font-display); font-weight:800; font-size:22cqw; line-height:.72; color:var(--kapatid-gold); opacity:.5; height:10cqw; overflow:visible;">“</div>' +
-        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(5.2cqw * var(--fs)); line-height:1.22; letter-spacing:-0.01em;">' + esc(d.quote) + '</p>' +
-        (d.reference ? '<div style="margin-top:3.5cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
-        '<div style="margin-top:5cqw;">' +
-          '<div style="width:9cqw; height:2px; background:var(--kapatid-gold); margin-bottom:2.5cqw;"></div>' +
+        '<div style="font-size:calc(3.4cqw * var(--fs)); letter-spacing:0.26em; text-transform:uppercase; font-weight:700; color:' + accent + '; margin-bottom:1cqw;">Testimony</div>' +
+        '<div style="font-family:var(--font-display); font-weight:800; font-size:16cqw; line-height:.7; color:' + accent + '; opacity:.5; height:7cqw; overflow:visible;">“</div>' +
+        '<p style="margin:1cqw 0 0; font-family:var(--font-display); font-weight:700; font-size:calc(5cqw * var(--fs)); line-height:1.22; letter-spacing:-0.01em;">' + esc(d.quote) + '</p>' +
+        (d.reference ? '<div style="margin-top:3cqw; font-weight:700; font-size:calc(2.8cqw * var(--fs)); letter-spacing:0.2em; text-transform:uppercase; opacity:.85;">' + esc(d.reference) + '</div>' : '') +
+        '<div style="margin-top:4cqw;">' +
+          '<div style="width:9cqw; height:2px; background:' + accent + '; margin-bottom:2cqw;"></div>' +
           '<div style="font-family:var(--font-display); font-weight:800; font-size:calc(4.6cqw * var(--fs)); line-height:1.05;">' + esc(d.name) + '</div>' +
           (d.role ? '<div style="font-weight:500; font-size:calc(3.2cqw * var(--fs)); opacity:.8; margin-top:0.6cqw;">' + esc(d.role) + '</div>' : '') +
         '</div>' +
       '</div>';
     return '' +
-    '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + v.ink + '; overflow:hidden;">' +
+    '<div style="position:absolute; inset:0; background:' + v.bgColor + '; color:' + ink + '; overflow:hidden;">' +
       layer +
       '<div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:9cqw; z-index:2;">' + content + '</div>' +
       logoImg('right:6cqw; bottom:6cqw; width:12cqw;', d.photo ? 'brightness(0) invert(1)' : v.logoFilter, '.92') +

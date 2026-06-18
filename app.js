@@ -160,6 +160,60 @@
 
   let uploadKey = null;
   let copyTimer = null;
+  let keysBound = false;
+
+  // ---- Undo / redo history --------------------------------------------
+  // Snapshots of the editable content (active template + format + data).
+  let history = [];
+  let histIndex = -1;
+  let histLastKey = null;
+  let histLastTime = 0;
+
+  function snapshot() {
+    return JSON.stringify({ active: state.active, format: state.format, data: state.data });
+  }
+  function restoreSnapshot(snap) {
+    const o = JSON.parse(snap);
+    state.active = o.active;
+    state.format = o.format;
+    state.data = o.data;
+  }
+  function historyInit() {
+    history = [snapshot()];
+    histIndex = 0;
+    histLastKey = null;
+    histLastTime = 0;
+  }
+  // Record AFTER a change is applied. Consecutive edits to the same field
+  // (e.g. typing) within a short window coalesce into one undo step.
+  function historyRecord(key) {
+    const snap = snapshot();
+    const now = Date.now();
+    const coalesce = key && key === histLastKey && (now - histLastTime) < 700 &&
+      histIndex === history.length - 1 && histIndex >= 0;
+    if (coalesce) {
+      history[histIndex] = snap;
+    } else {
+      history = history.slice(0, histIndex + 1);
+      history.push(snap);
+      if (history.length > 120) history.shift();
+      histIndex = history.length - 1;
+    }
+    histLastKey = key;
+    histLastTime = now;
+  }
+  function canUndo() { return histIndex > 0; }
+  function canRedo() { return histIndex < history.length - 1; }
+  function undo() {
+    if (!canUndo()) return;
+    histIndex--; restoreSnapshot(history[histIndex]);
+    histLastKey = null; state.copied = false; render();
+  }
+  function redo() {
+    if (!canRedo()) return;
+    histIndex++; restoreSnapshot(history[histIndex]);
+    histLastKey = null; state.copied = false; render();
+  }
 
   // ---- Helpers ---------------------------------------------------------
   function esc(s) {
@@ -173,6 +227,7 @@
   function setField(key, val) {
     const a = state.active;
     state.data[a] = Object.assign({}, state.data[a], { [key]: val });
+    historyRecord(key);
     render();
   }
   function selectTemplate(id) { state.active = id; state.copied = false; render(); }
@@ -770,6 +825,12 @@
     const copyLabel = state.copied ? 'Copied ✓' : 'Copy caption';
     const downloadLabel = state.exporting ? 'Exporting…' : 'Download PNG';
     const darkIcon = state.dark ? '☀' : '☾';
+    const histBtn = function (action, icon, label, enabled) {
+      const op = enabled ? '1' : '0.4';
+      const cur = enabled ? 'pointer' : 'not-allowed';
+      return '<button data-action="' + action + '"' + (enabled ? '' : ' disabled') + ' title="' + label + '" ' +
+        'style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:999px; border:2px solid var(--app-border); background:var(--app-panel); color:var(--app-text); font-size:18px; cursor:' + cur + '; opacity:' + op + ';">' + icon + '</button>';
+    };
 
     const templatesHtml = TEMPLATES.map(t => {
       const on = t.id === v.a;
@@ -802,6 +863,8 @@
           '</div>' +
         '</div>' +
         '<div style="display:flex; align-items:center; gap:10px;">' +
+          histBtn('undo', '↶', 'Undo (Ctrl+Z)', canUndo()) +
+          histBtn('redo', '↷', 'Redo (Ctrl+Y)', canRedo()) +
           '<button data-action="logout" title="Sign out" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:999px; border:2px solid var(--app-border); background:var(--app-panel); color:var(--app-muted); font-size:16px; cursor:pointer;">⎋</button>' +
           '<button data-action="toggleDark" title="Toggle dark mode" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:999px; border:2px solid var(--app-border); background:var(--app-panel); color:var(--app-text); font-size:18px; cursor:pointer;">' + darkIcon + '</button>' +
           '<button data-action="copyCaption" style="display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 18px; border-radius:999px; border:2px solid var(--kapatid-blue); background:var(--app-panel); color:var(--kapatid-blue); font-weight:700; font-size:14px; cursor:pointer;">' + esc(copyLabel) + '</button>' +
@@ -1030,6 +1093,8 @@
       if (action === 'selectTemplate') selectTemplate(t.dataset.id);
       else if (action === 'setFormat') setFormat(t.dataset.fmt);
       else if (action === 'toggleDark') toggleDark();
+      else if (action === 'undo') undo();
+      else if (action === 'redo') redo();
       else if (action === 'copyCaption') copyCaption();
       else if (action === 'logout') { sessionStorage.removeItem(SESSION_KEY); renderLogin(); }
       else if (action === 'download') download();
@@ -1054,6 +1119,21 @@
       if (e.target && e.target.id === 'fileInput') onUploadFile(e);
     });
 
+    // keyboard shortcuts: Ctrl/Cmd+Z = undo, Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z = redo
+    if (!keysBound) {
+      keysBound = true;
+      document.addEventListener('keydown', function (e) {
+        if (!isAuthed()) return;
+        if (document.getElementById('cropOverlay')) return; // don't fight the crop modal
+        const mod = e.ctrlKey || e.metaKey;
+        if (!mod) return;
+        const k = (e.key || '').toLowerCase();
+        if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+        else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); redo(); }
+      });
+    }
+
+    historyInit();
     render();
 
     // re-fit once web fonts finish loading (metrics change after load)
